@@ -10,6 +10,7 @@ from tasks.application.insert_task_use_case import InsertTaskUseCase
 from tasks.application.update_title_or_description_by_task_id_use_case import UpdateTitleOrDescriptionByTaskIdUseCase
 from tasks.infrastructure.postgres_task_repository import PostgresRepository
 
+
 task_repository = PostgresRepository()
 
 

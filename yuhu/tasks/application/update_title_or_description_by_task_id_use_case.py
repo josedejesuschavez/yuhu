@@ -1,7 +1,12 @@
 from shared.domain.invalid_argument_error import InvalidArgumentError
+from shared.infrastructure.event_dispatcher import EventDispatcher
+from tasks.domain.events.task_updated_event import TaskUpdatedEvent
 from tasks.domain.task import Task
 from tasks.domain.task_repository import TaskRepository
+from tasks.infrastructure.task_updated_subscriber import TaskUpdatedSubscriber
 
+event_dispatcher = EventDispatcher()
+event_dispatcher.subscribe(TaskUpdatedEvent, TaskUpdatedSubscriber())
 
 class UpdateTitleOrDescriptionByTaskIdUseCase:
 
@@ -19,3 +24,6 @@ class UpdateTitleOrDescriptionByTaskIdUseCase:
 
         if task_updated.equals(Task.create_task_null()):
             raise InvalidArgumentError(message=f"Task '{id}' not found.", params={})
+
+        event = TaskUpdatedEvent(task_id=id, title=new_title, email=task_updated.email.value, description=new_description)
+        event_dispatcher.dispatch(event)

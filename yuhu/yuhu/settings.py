@@ -134,3 +134,20 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,  # Si solo quieres que el esquema se sirva por separado.
 }
+
+# URL del broker de Celery (RabbitMQ)
+CELERY_BROKER_URL = 'amqp://user:password@rabbitmq:5672/'
+
+# Opcional: Si quieres almacenar los resultados de las tareas
+CELERY_RESULT_BACKEND = 'rpc://'
+
+# Configura tareas automáticas
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'testjosedejesustest@gmail.com'
+EMAIL_HOST_PASSWORD = 'btki apvt vqup chfa'
