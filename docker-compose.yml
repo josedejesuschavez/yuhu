@@ -1,0 +1,18 @@
+services:
+  application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./yuhu:/code
+  jupyter-notebook:
+    image: jupyter/minimal-notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./yuhu:/home/jovyan
+    environment:
+      - JUPYTER_TOKEN=mi_token_secreto

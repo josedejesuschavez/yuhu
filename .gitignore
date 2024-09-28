@@ -1,0 +1,8 @@
+.idea
+venv
+.npm
+.cache
+.jupyter
+.local
+staticfiles
+__pycache__
