@@ -19,16 +19,13 @@ services:
       - 5432:5432
     volumes:
       - ./postgres:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=S3cret
-      - POSTGRES_USER=yuhu_user
-      - POSTGRES_DB=yuhu_db
+    env_file:
+      - .env
   rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
+    env_file:
+      - .env
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -50,8 +47,8 @@ services:
       - "8888:8888"
     volumes:
       - ./yuhu:/home/jovyan
-    environment:
-      - JUPYTER_TOKEN=mi_token_secreto
+    env_file:
+      - .env
 
 volumes:
   rabbitmq_data: {}
