@@ -26,7 +26,7 @@ class PostgresRepository(TaskRepository):
 
         return [
             Task.create_task(
-                id=str(task.id),
+                id=str(task.uuid_id),
                 title=task.title,
                 email=task.email,
                 description=task.description,
