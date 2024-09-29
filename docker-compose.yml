@@ -10,9 +10,9 @@ services:
       - ./yuhu:/code
     depends_on:
       - rabbitmq
-      #- celery_worker
-    environment:
-      - CELERY_BROKER_URL=amqp://user:password@rabbitmq
+      - celery_worker
+    env_file:
+      - .env
   database:
     image: postgres:16.2
     ports:
@@ -42,8 +42,8 @@ services:
       - rabbitmq
     volumes:
       - ./yuhu:/code
-    environment:
-      - CELERY_BROKER_URL=amqp://user:password@rabbitmq
+    env_file:
+      - .env
   jupyter-notebook:
     image: jupyter/minimal-notebook
     ports:
