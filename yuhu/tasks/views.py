@@ -1,5 +1,7 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status, serializers
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,6 +15,10 @@ from tasks.infrastructure.postgres_task_repository import PostgresRepository
 
 task_repository = PostgresRepository()
 
+class TaskPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 class TaskSerializer(serializers.Serializer):
     id = serializers.UUIDField()
@@ -25,12 +31,23 @@ class TaskUpdateSerializer(serializers.Serializer):
     description = serializers.CharField(required=False)
 
 
-class TaskView(APIView):
+@extend_schema(
+    parameters=[
+        OpenApiParameter('page', int, description="Número de la página", required=False),
+        OpenApiParameter('page_size', int, description="Número de tareas por página", required=False),
+    ]
+)
+class TaskView(ListCreateAPIView):
+    pagination_class = TaskPagination
 
     def get(self, request, *args, **kwargs):
+
+
         use_case = GetAllTasksUseCase(task_repository=task_repository)
         result = use_case.execute()
-        return Response(result, status=status.HTTP_200_OK)
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(result, request)
+        return paginator.get_paginated_response(result_page)
 
     @extend_schema(
         request=TaskSerializer,
