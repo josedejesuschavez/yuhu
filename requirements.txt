@@ -3,3 +3,4 @@ pytest==8.3.3
 drf-spectacular==0.27.2
 celery[rabbitmq]==5.4.0
 django-celery-beat==2.7.0
+psycopg2==2.9.9

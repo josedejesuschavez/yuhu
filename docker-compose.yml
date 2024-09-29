@@ -13,6 +13,16 @@ services:
       #- celery_worker
     environment:
       - CELERY_BROKER_URL=amqp://user:password@rabbitmq
+  database:
+    image: postgres:16.2
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=S3cret
+      - POSTGRES_USER=yuhu_user
+      - POSTGRES_DB=yuhu_db
   rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq
@@ -28,18 +38,6 @@ services:
       dockerfile: Dockerfile
     container_name: celery_worker
     command: celery -A yuhu worker --loglevel=info
-    depends_on:
-      - rabbitmq
-    volumes:
-      - ./yuhu:/code
-    environment:
-      - CELERY_BROKER_URL=amqp://user:password@rabbitmq
-  celery_beat:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: celery_beat
-    command: celery -A yuhu beat --loglevel=info
     depends_on:
       - rabbitmq
     volumes:

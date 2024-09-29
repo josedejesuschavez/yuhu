@@ -9,7 +9,7 @@ class PostgresRepository(TaskRepository):
 
     def get_task_by_id(self, id: str) -> Task:
         try:
-            task_model = TaskModel.objects.get(id=id)
+            task_model = TaskModel.objects.get(uuid_id=id)
 
             task = Task.create_task(
                 id=str(task_model.id),
@@ -36,7 +36,7 @@ class PostgresRepository(TaskRepository):
 
     def insert_task(self, task: Task):
         TaskModel(
-            id=task.id.value,
+            uuid_id=task.id.value,
             title=task.title.value,
             email=task.email.value,
             description=task.description.value,
@@ -44,7 +44,7 @@ class PostgresRepository(TaskRepository):
 
     def update_title_or_description_by_id(self, id: str, new_title: str, new_description: str) -> Task:
         try:
-            task_model = TaskModel.objects.get(id=id)
+            task_model = TaskModel.objects.get(uuid_id=id)
 
             if new_title:
                 task_model.title = new_title
@@ -66,7 +66,7 @@ class PostgresRepository(TaskRepository):
 
     def delete_task_by_id(self, id: str):
         try:
-            task_model = TaskModel.objects.get(id=id)
+            task_model = TaskModel.objects.get(uuid_id=id)
 
             task_model.delete()
             return Task.create_task(

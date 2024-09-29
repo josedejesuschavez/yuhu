@@ -4,7 +4,7 @@ from django.db import models
 
 
 class TaskModel(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # GUID as the primary key
+    uuid_id = models.UUIDField(default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=100)
     email = models.EmailField()
     description = models.TextField()
