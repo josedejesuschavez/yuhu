@@ -6,4 +6,4 @@ venv
 .local
 staticfiles
 __pycache__
-postgres
+postgres_data

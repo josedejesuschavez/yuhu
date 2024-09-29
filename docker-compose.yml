@@ -11,6 +11,7 @@ services:
     volumes:
       - ./yuhu:/code
     depends_on:
+      - database
       - rabbitmq
       - celery_worker
     env_file:
@@ -53,4 +54,5 @@ services:
       - .env
 
 volumes:
+  postgres_data:
   rabbitmq_data: {}
