@@ -138,5 +138,6 @@ class UpdateTaskFormView(FormView):
                 description = None
             use_case = UpdateTitleOrDescriptionByTaskIdUseCase(task_repository=task_repository)
             use_case.execute(id=id, new_title=title, new_description=description)
+            return HttpResponseRedirect(reverse_lazy('home'))
         except InvalidArgumentError as e:
             return HttpResponse(str(e))

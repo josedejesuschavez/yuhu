@@ -10,6 +10,7 @@ from model_bakery import baker
 
 from shared.domain.invalid_argument_error import InvalidArgumentError
 from tasks.application.delete_by_task_id_use_case import DeleteByTaskIdUseCase
+from tasks.application.get_all_tasks_use_case import GetAllTasksUseCase
 from tasks.application.insert_task_use_case import InsertTaskUseCase
 from tasks.domain.task import Task
 from tasks.domain.task_repository import TaskRepository
@@ -73,6 +74,11 @@ class FakeEventDispatcher:
     def dispatch(self, event):
         return None
 
+
+def test_get_all_tasks_use_case_happy_path():
+    use_case = GetAllTasksUseCase(task_repository=FakeTaskRepository())
+    result = use_case.execute()
+    assert len(result) == 0
 
 @pytest.mark.django_db
 def test_insert_task_use_case_happy_path():
