@@ -31,6 +31,7 @@ class PostgresRepository(TaskRepository):
                 title=task.title,
                 email=task.email,
                 description=task.description,
+                due_date=int(task.due_date.timestamp()) if task.due_date is not None else None,
             )
             for task in data
         ]
@@ -63,6 +64,7 @@ class PostgresRepository(TaskRepository):
                 title=task_model.title,
                 email=task_model.email,
                 description=task_model.description,
+                due_date=int(task_model.due_date.timestamp()) if task_model.due_date is not None else None,
             )
             return task
         except TaskModel.DoesNotExist:
@@ -78,6 +80,7 @@ class PostgresRepository(TaskRepository):
                 title=task_model.title,
                 email=task_model.email,
                 description=task_model.description,
+                due_date=int(task_model.due_date.timestamp()) if task_model.due_date is not None else None,
             )
         except TaskModel.DoesNotExist:
             return Task.create_task_null()

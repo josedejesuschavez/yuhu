@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.1.0/dist/full.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-base-200 flex flex-col items-center justify-center min-h-screen">
+<div class="w-full max-w-md">
+    <div class="bg-fuchsia-400 text-white p-6 rounded-t-lg">
+        <h1 class="text-2xl font-bold mb-2">Yuhu</h1>
+    </div>
+    <div class="bg-base-100 p-6 rounded-b-lg shadow-xl">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-control">
+                <label class="label" for="username">
+                    <span class="label-text">Usuario</span>
+                </label>
+                <input type="text" name="username" class="input input-bordered" required id="username" value="{{ form.username.value|default:'' }}">
+            </div>
+            <div class="form-control mt-4">
+                <label class="label" for="password">
+                    <span class="label-text">Contraseña</span>
+                </label>
+                <input type="password" name="password" class="input input-bordered" required id="password" value="{{ form.password.value|default:'' }}"/>
+            </div>
+            <div class="form-control mt-6">
+                <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
