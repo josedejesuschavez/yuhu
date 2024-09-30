@@ -4,25 +4,37 @@ from typing import List
 from shared.domain.entity import Entity
 from shared.domain.invalid_argument_error import InvalidArgumentError
 from tasks.domain.value_objects.task_description import TaskDescription
+from tasks.domain.value_objects.task_due_date import TaskDueDate
 from tasks.domain.value_objects.task_email import TaskEmail
 from tasks.domain.value_objects.task_title import TaskTitle
 
 
 class Task(Entity):
 
-    def __init__(self, id: str, title: str, email: str, description: str) -> None:
+    def __init__(self,
+                 id: str,
+                 title: str,
+                 email: str,
+                 description: str,
+                 due_date: int = None) -> None:
         super().__init__(id)
         self.title = TaskTitle(value=title)
         self.email = TaskEmail(value=email)
         self.description = TaskDescription(value=description)
+        self.due_date = TaskDueDate(value=due_date)
+
+    def update_due_date(self, new_due_date: int) -> None:
+        self.due_date = TaskDueDate(value=new_due_date)
 
     @classmethod
-    def create_task(cls, id: str, title: str, email: str, description: str):
+    def create_task(cls, id: str, title: str, email: str, description: str, due_date: int = None) -> 'Task':
         return cls(
             id=id,
             title=title,
             email=email,
-            description=description)
+            description=description,
+            due_date=due_date,
+        )
 
     @classmethod
     def create_task_null(cls):
@@ -30,7 +42,9 @@ class Task(Entity):
             id=str(uuid.UUID(int=0)),
             title='',
             email='empty@empty.com',
-            description='')
+            description='',
+            due_date=None
+        )
 
     @staticmethod
     def verify_if_task_exists(task: "Task", tasks: List["Task"]) -> bool:
@@ -55,4 +69,6 @@ class Task(Entity):
             "title": self.title.value,
             "email": self.email.value,
             "description": self.description.value,
+            "due_date": self.due_date.value,
+            "due_date_format_date": self.due_date.from_timestamp()
         }

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from tasks.domain.task import Task
@@ -12,7 +13,7 @@ class PostgresRepository(TaskRepository):
             task_model = TaskModel.objects.get(uuid_id=id)
 
             task = Task.create_task(
-                id=str(task_model.id),
+                id=str(task_model.uuid_id),
                 title=task_model.title,
                 email=task_model.email,
                 description=task_model.description,
@@ -42,7 +43,7 @@ class PostgresRepository(TaskRepository):
             description=task.description.value,
         ).save()
 
-    def update_title_or_description_by_id(self, id: str, new_title: str, new_description: str) -> Task:
+    def update_by_id(self, id: str, new_title: str = None, new_description: str = None, new_due_date: int = None) -> Task:
         try:
             task_model = TaskModel.objects.get(uuid_id=id)
 
@@ -52,10 +53,13 @@ class PostgresRepository(TaskRepository):
             if new_description:
                 task_model.description = new_description
 
+            if new_due_date:
+                task_model.due_date = datetime.fromtimestamp(new_due_date)
+
             task_model.save()
 
             task = Task.create_task(
-                id=str(task_model.id),
+                id=str(task_model.uuid_id),
                 title=task_model.title,
                 email=task_model.email,
                 description=task_model.description,

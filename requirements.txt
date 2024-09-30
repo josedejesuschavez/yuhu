@@ -4,3 +4,4 @@ drf-spectacular==0.27.2
 celery[rabbitmq]==5.4.0
 django-celery-beat==2.7.0
 psycopg2==2.9.9
+django-rest-authtoken==2.1.4

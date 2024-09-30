@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import date
 from typing import TypeVar, Generic, Optional
 
 from shared.domain.invalid_argument_error import InvalidArgumentError

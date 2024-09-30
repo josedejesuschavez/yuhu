@@ -19,7 +19,7 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
-    def update_title_or_description_by_id(self, id: str, new_title: str, new_description: str):
+    def update_by_id(self, id: str, new_title: str = None, new_description: str = None, new_due_date: int = None):
         pass
 
     @abstractmethod
