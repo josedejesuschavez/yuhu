@@ -1,4 +1,3 @@
-from tasks.domain.task import Task
 from tasks.domain.task_repository import TaskRepository
 
 

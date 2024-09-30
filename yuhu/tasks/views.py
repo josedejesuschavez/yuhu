@@ -15,6 +15,7 @@ from tasks.application.add_due_date_to_a_task_use_case import AddDueDateToATaskU
 from tasks.application.delete_by_task_id_use_case import DeleteByTaskIdUseCase
 from tasks.application.get_all_tasks_use_case import GetAllTasksUseCase
 from tasks.application.insert_task_use_case import InsertTaskUseCase
+from tasks.application.update_title_or_description_by_task_id_use_case import UpdateTitleOrDescriptionByTaskIdUseCase
 from tasks.infrastructure.postgres_task_repository import PostgresRepository
 
 task_repository = PostgresRepository()
@@ -48,7 +49,7 @@ class HomeView(LoginRequiredMixin, View):
 
         use_case = GetAllTasksUseCase(task_repository=task_repository)
         result = use_case.execute()
-        paginator = Paginator(result, 1)
+        paginator = Paginator(result, 9)
 
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
@@ -113,3 +114,29 @@ class DeleteTaskFormView(LoginRequiredMixin, View):
         use_case = DeleteByTaskIdUseCase(task_repository=task_repository)
         use_case.execute(id=id)
         return HttpResponseRedirect(reverse_lazy('home'))
+
+class UpdateTaskForm(forms.Form):
+    title = forms.CharField(max_length=100, required=False)
+    description = forms.CharField(widget=forms.Textarea, required=False)
+
+
+class UpdateTaskFormView(FormView):
+    template_name = 'update_task.html'
+    form_class = UpdateTaskForm
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        try:
+            id = self.kwargs.get('id')
+            title = form.cleaned_data.get('title')
+            description = form.cleaned_data.get('description')
+
+            if title == '':
+                title = None
+
+            if description == '':
+                description = None
+            use_case = UpdateTitleOrDescriptionByTaskIdUseCase(task_repository=task_repository)
+            use_case.execute(id=id, new_title=title, new_description=description)
+        except InvalidArgumentError as e:
+            return HttpResponse(str(e))

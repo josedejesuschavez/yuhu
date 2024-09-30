@@ -5,15 +5,14 @@ from tasks.domain.task import Task
 from tasks.domain.task_repository import TaskRepository
 from tasks.infrastructure.task_updated_subscriber import TaskUpdatedSubscriber
 
-event_dispatcher = EventDispatcher()
-event_dispatcher.subscribe(TaskUpdatedEvent, TaskUpdatedSubscriber())
-
 class UpdateTitleOrDescriptionByTaskIdUseCase:
 
-    def __init__(self, task_repository: TaskRepository):
+    def __init__(self, task_repository: TaskRepository, event_dispatcher = EventDispatcher()):
         self.task_repository = task_repository
+        self.event_dispatcher = event_dispatcher
+        self.event_dispatcher.subscribe(TaskUpdatedEvent, TaskUpdatedSubscriber())
 
-    def execute(self, id: str, new_title: str, new_description: str):
+    def execute(self, id: str, new_title: str = None, new_description: str = None):
         if new_title is None and new_description is None:
            raise InvalidArgumentError(message='No parameters provided for update.', params={})
 
@@ -26,4 +25,4 @@ class UpdateTitleOrDescriptionByTaskIdUseCase:
             raise InvalidArgumentError(message=f"Task '{id}' not found.", params={})
 
         event = TaskUpdatedEvent(task_id=id, title=new_title, email=task_updated.email.value, description=new_description)
-        event_dispatcher.dispatch(event)
+        self.event_dispatcher.dispatch(event)
