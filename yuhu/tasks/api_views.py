@@ -129,7 +129,7 @@ class TaskAddDueDateView(APIView):
         summary='Add due date to Task',
         description='Add due Date.',
     )
-    def post(self, request, id):
+    def put(self, request, id):
         try:
             serializer = TaskAddDueDateSerializer(data=request.data)
 
