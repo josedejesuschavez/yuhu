@@ -21,7 +21,7 @@ def insert_new_task(title: str, email: str, description: str):
 
     event = TaskCreatedEvent(task_id=id, title=title, email=email, description=description)
 
-    #send_task_created_email.delay(event)
+    send_task_created_email.delay(event)
     return task.to_dict()
 
 def delete_task_by_id(id: int):
@@ -48,7 +48,7 @@ def update_task_by_id(id: int, new_title: str, new_description: str):
         task.save()
 
         event = TaskUpdatedEvent(task_id=id, title=new_title, email=task.email, description=new_description)
-        #send_task_updated_email.delay(event)
+        send_task_updated_email.delay(event)
     except Task.DoesNotExist:
         raise InvalidArgumentError(message=f"A task with id '{id}' not exists.", params={})
 
