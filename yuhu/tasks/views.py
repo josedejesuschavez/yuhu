@@ -1,5 +1,3 @@
-import uuid
-
 from django import forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,19 +8,8 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import FormView
 
-from shared.domain.invalid_argument_error import InvalidArgumentError
-from tasks.application.add_due_date_to_a_task_use_case import AddDueDateToATaskUseCase
-from tasks.application.delete_by_task_id_use_case import DeleteByTaskIdUseCase
-from tasks.application.get_all_tasks_use_case import GetAllTasksUseCase
-from tasks.application.insert_task_use_case import InsertTaskUseCase
-from tasks.application.update_title_or_description_by_task_id_use_case import UpdateTitleOrDescriptionByTaskIdUseCase
-from tasks.infrastructure.postgres_task_repository import PostgresRepository
-
-task_repository = PostgresRepository()
-
-class LoginForm(forms.Form):
-    username = forms.CharField(max_length=100)
-    password = forms.CharField(max_length=100)
+from tasks.forms import LoginForm, NewTaskForm, AddDueDateForm, UpdateTaskForm
+from tasks.services import get_all_tasks, insert_new_task, delete_task_by_id, update_task_by_id, add_due_date
 
 
 class LoginFormView(FormView):
@@ -47,19 +34,13 @@ class HomeView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
 
-        use_case = GetAllTasksUseCase(task_repository=task_repository)
-        result = use_case.execute()
-        paginator = Paginator(result, 9)
+        tasks = get_all_tasks()
+        paginator = Paginator(tasks, 10)
 
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
         return render(request, 'home.html', {'page_obj': page_obj})
-
-class NewTaskForm(forms.Form):
-    title = forms.CharField(max_length=100)
-    email = forms.CharField(max_length=100)
-    description = forms.CharField(widget=forms.Textarea)
 
 class NewTaskFormView(FormView):
     template_name = 'new_task.html'
@@ -67,24 +48,14 @@ class NewTaskFormView(FormView):
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):
-        id = str(uuid.uuid4())
         title = form.cleaned_data.get('title')
         email = form.cleaned_data.get('email')
         description = form.cleaned_data.get('description')
 
-        use_case = InsertTaskUseCase(task_repository=task_repository)
-        use_case.execute(id=id, title=title, email=email, description=description)
+        insert_new_task(title=title, email=email, description=description)
 
         return HttpResponseRedirect(self.success_url)
 
-class AddDueDateForm(forms.Form):
-    due_date = forms.DateTimeField(
-        widget=forms.DateTimeInput(attrs={
-            'type': 'datetime-local',
-            'class': 'form-control',
-            'placeholder': 'Select date and time'
-        })
-    )
 
 class AddDueDateFormView(FormView):
     template_name = 'add_due_date.html'
@@ -99,8 +70,7 @@ class AddDueDateFormView(FormView):
             id = str(id)
             due_date = int(due_date.timestamp())
 
-            use_case = AddDueDateToATaskUseCase(task_repository=task_repository)
-            use_case.execute(id=id, due_date=due_date)
+            add_due_date(id=id, due_date=due_date)
             return HttpResponseRedirect(self.success_url)
         except InvalidArgumentError as e:
             return HttpResponse(str(e))
@@ -111,14 +81,8 @@ class DeleteTaskFormView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         id = str(self.kwargs.get('id'))
 
-        use_case = DeleteByTaskIdUseCase(task_repository=task_repository)
-        use_case.execute(id=id)
+        delete_task_by_id(id=id)
         return HttpResponseRedirect(reverse_lazy('home'))
-
-class UpdateTaskForm(forms.Form):
-    title = forms.CharField(max_length=100, required=False)
-    description = forms.CharField(widget=forms.Textarea, required=False)
-
 
 class UpdateTaskFormView(FormView):
     template_name = 'update_task.html'
@@ -136,8 +100,8 @@ class UpdateTaskFormView(FormView):
 
             if description == '':
                 description = None
-            use_case = UpdateTitleOrDescriptionByTaskIdUseCase(task_repository=task_repository)
-            use_case.execute(id=id, new_title=title, new_description=description)
+
+            update_task_by_id(id=id, new_title=title, new_description=description)
             return HttpResponseRedirect(reverse_lazy('home'))
         except InvalidArgumentError as e:
             return HttpResponse(str(e))

@@ -1,9 +1,7 @@
 from celery import shared_task
-from time import sleep
 
 from django.core.mail import send_mail
 
-from tasks.domain.events.task_created_event import TaskCreatedEvent
 from yuhu.settings import EMAIL_HOST_USER
 
 
