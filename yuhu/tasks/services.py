@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from tasks.events import TaskUpdatedEvent, TaskCreatedEvent
 from tasks.exceptions import InvalidArgumentError
 from tasks.models import Task
@@ -50,11 +52,11 @@ def update_task_by_id(id: int, new_title: str, new_description: str):
     except Task.DoesNotExist:
         raise InvalidArgumentError(message=f"A task with id '{id}' not exists.", params={})
 
-def add_due_date(id: int, due_date):
+def add_due_date(id: int, due_date: int):
     try:
         task = Task.objects.get(id=id)
 
-        task.due_date = due_date
+        task.due_date = datetime.fromtimestamp(due_date)
         task.save()
         return task.to_dict()
     except Task.DoesNotExist:

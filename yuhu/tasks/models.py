@@ -16,5 +16,6 @@ class Task(models.Model):
             "title": self.title,
             "email": self.email,
             "description": self.description,
-            "due_date": self.due_date,
+            "due_date": int(self.due_date.timestamp()),
+            "due_date_format_date": self.due_date,
         }
